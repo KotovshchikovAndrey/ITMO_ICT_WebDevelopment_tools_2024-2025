@@ -1,13 +1,17 @@
 from typing import Annotated
-from fastapi import APIRouter, Body, Depends
-from users.depends import get_current_user, get_user_service
+from fastapi import APIRouter, Depends, status
+from users.depends import get_user_service
 from users.dtos import UserChangePasswordDTO, UserCreateDTO, UserDTO, UserTokenDTO
 from users.services import UserService
 
 router = APIRouter(prefix="/users")
 
 
-@router.post("/sign-up", response_model=UserTokenDTO)
+@router.post(
+    "/sign-up",
+    response_model=UserTokenDTO,
+    status_code=status.HTTP_201_CREATED,
+)
 async def sign_up(
     dto: UserCreateDTO,
     service: Annotated[UserService, Depends(get_user_service)],

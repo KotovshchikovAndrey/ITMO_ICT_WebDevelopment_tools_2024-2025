@@ -1,5 +1,5 @@
 from typing import Annotated, Optional
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, status
 
 from projects.deoends import get_project_service
 from projects.dtos import ProjectCreateDTO, ProjectUpdateDTO
@@ -26,7 +26,7 @@ async def get_allowed_projects(
     return {"projects": projects}
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_project(
     current_user: Annotated[UserDTO, Depends(get_current_user)],
     service: Annotated[ProjectService, Depends(get_project_service)],

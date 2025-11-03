@@ -1,11 +1,9 @@
-from core.database import SQLConnection
-from core.config import settings
-
-connection = SQLConnection(database_uri=str(settings.DATABASE_URI))
+from fastapi import Request
 
 
-async def get_session():
-    session = connection.get_sesion()
+async def get_session(request: Request):
+    connection = request.app.state.connection
+    session = connection.get_session()
     try:
         yield session
         await session.commit()
@@ -13,4 +11,4 @@ async def get_session():
         await session.rollback()
         raise exc
     finally:
-        await session.close()
+        await session.remove()

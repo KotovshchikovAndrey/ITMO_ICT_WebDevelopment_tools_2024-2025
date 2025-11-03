@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, status
 
 from profiles.depends import get_profile_service
 from profiles.dtos import CriteriaDTO, ProfileCreateDTO, ProfileDTO, ProfileUpdateDTO
@@ -34,7 +34,7 @@ async def get_me(
     return await service.get_my_profile(me=current_user)
 
 
-@router.post("/me", response_model=ProfileDTO)
+@router.post("/me", response_model=ProfileDTO, status_code=status.HTTP_201_CREATED)
 async def create_profile(
     current_user: Annotated[User, Depends(get_current_user)],
     service: Annotated[ProfileService, Depends(get_profile_service)],

@@ -1,5 +1,7 @@
+import asyncio
 from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
+    async_scoped_session,
     create_async_engine,
     AsyncSession,
 )
@@ -15,8 +17,12 @@ class SQLConnection:
             autocommit=False,
         )
 
-    def get_sesion(self) -> AsyncSession:
-        session = self._session_factory()
+    def get_session(self) -> async_scoped_session[AsyncSession]:
+        session = async_scoped_session(
+            session_factory=self._session_factory,
+            scopefunc=asyncio.current_task,
+        )
+
         return session
 
     async def close(self) -> None:
